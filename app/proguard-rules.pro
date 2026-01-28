@@ -13,3 +13,7 @@
 # Rhino JavaScript engine
 -dontwarn javax.script.** 
 -dontwarn jdk.dynalink.**
+
+# JSoup re2j optional dependency
+-dontwarn com.google.re2j.Matcher
+-dontwarn com.google.re2j.Pattern
