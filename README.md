@@ -4,6 +4,9 @@
 
 This is a fork of the original YouTube Music extension, modified to provide **Universal Search** capabilities. It allows accessing the full YouTube catalog (videos, shows, etc.) instead of being restricted to official music content.
 
+> [!WARNING]
+> **DISCLAIMER:** This project is developed for **educational and research purposes only**. It is not affiliated with, associated with, authorized by, or endorsed by Google LLC or YouTube. The use of this extension may violate YouTube's Terms of Service. The developer assumes no responsibility for any misuse of this tool, potential account suspensions, or copyright issues. Software is provided "as is" without any warranties.
+
 ## Features
 - **Independent Installation:** Coexists with the official YouTube Music extension.
 - **Global Search:** Access the entire YouTube database using the standard WEB client.
