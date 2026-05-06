@@ -1,6 +1,7 @@
 package dev.brahmkshatriya.echo.extension.search
 
 import dev.brahmkshatriya.echo.common.models.Album
+import dev.brahmkshatriya.echo.common.models.Artist
 import dev.brahmkshatriya.echo.common.models.EchoMediaItem
 import dev.brahmkshatriya.echo.common.models.Playlist
 import dev.brahmkshatriya.echo.common.models.Shelf
@@ -30,38 +31,40 @@ class YouTubeSearchService(
         val shelves: List<Shelf>,
         val error: Exception? = null
     )
+
+    // Perform a single broad search for "All" category to avoid duplicates
     suspend fun searchAllCategories(
         query: String,
         thumbnailQuality: ThumbnailProvider.Quality
-    ): List<CategorySearchResult> = coroutineScope {
-        val searchTypes = listOf(
-            SearchType.SONG,
-            SearchType.VIDEO,
-            SearchType.ALBUM,
-            SearchType.ARTIST,
-            SearchType.PLAYLIST
-        )
-        
-        searchTypes.map { searchType ->
-            async {
-                searchCategory(query, searchType, thumbnailQuality)
-            }
-        }.map { it.await() }
+    ): List<CategorySearchResult> {
+        return listOf(searchCategory(query, SearchType.VIDEO, thumbnailQuality, isBroad = true))
+    }
+
+    private fun getYoutubeSearchParams(searchType: SearchType): String? {
+        return when (searchType) {
+            SearchType.VIDEO -> "EgIQAQ%3D%3D"
+            SearchType.ARTIST -> "EgIQAg%3D%3D" // Channel filter
+            SearchType.PLAYLIST -> "EgIQAw%3D%3D"
+            SearchType.ALBUM -> "EgIQAw%3D%3D"
+            SearchType.SONG -> "EgIQAQ%3D%3D"
+        }
     }
 
     suspend fun searchCategory(
         query: String,
         searchType: SearchType,
-        thumbnailQuality: ThumbnailProvider.Quality
+        thumbnailQuality: ThumbnailProvider.Quality,
+        isBroad: Boolean = false
     ): CategorySearchResult {
         return try {
+            val params = if (isBroad) null else getYoutubeSearchParams(searchType)
             val searchResult = searchEndpoint.search(
                 query,
-                params = null, // Removed music-specific filters
+                params = params,
                 nonMusic = true
             ).getOrThrow()
             
-            val shelves = convertSearchResultsToShelves(searchResult, thumbnailQuality)
+            val shelves = convertSearchResultsToShelves(searchResult, thumbnailQuality, isBroad)
             CategorySearchResult(searchType, shelves)
         } catch (e: Exception) {
             println("${searchType.name} search failed: ${e.message}")
@@ -71,7 +74,8 @@ class YouTubeSearchService(
     
     private suspend fun convertSearchResultsToShelves(
         searchResults: SearchResults,
-        thumbnailQuality: ThumbnailProvider.Quality
+        thumbnailQuality: ThumbnailProvider.Quality,
+        isBroad: Boolean
     ): List<Shelf> {
         val shelves = mutableListOf<Shelf>()
         
@@ -87,8 +91,29 @@ class YouTubeSearchService(
             
             if (echoItems.isEmpty()) continue
             
-            val shelf = createShelfFromItems(title, echoItems)
-            shelves.add(shelf)
+            // If it's a broad search and the title is generic, split items into categories
+            if (isBroad && (title == "Results" || title == "Resultados")) {
+                val channels = echoItems.filterIsInstance<Artist>()
+                val videos = echoItems.filterIsInstance<Track>()
+                val albums = echoItems.filterIsInstance<Album>()
+                val playlists = echoItems.filterIsInstance<Playlist>()
+
+                if (channels.isNotEmpty()) {
+                    shelves.add(Shelf.Lists.Items("search_channels_${System.currentTimeMillis()}", "Channels", channels))
+                }
+                if (videos.isNotEmpty()) {
+                    shelves.add(Shelf.Lists.Tracks("search_videos_${System.currentTimeMillis()}", "Videos", videos))
+                }
+                if (albums.isNotEmpty()) {
+                    shelves.add(Shelf.Lists.Items("search_albums_${System.currentTimeMillis()}", "Albums", albums))
+                }
+                if (playlists.isNotEmpty()) {
+                    shelves.add(Shelf.Lists.Items("search_playlists_${System.currentTimeMillis()}", "Playlists", playlists))
+                }
+            } else {
+                val shelf = createShelfFromItems(title, echoItems)
+                shelves.add(shelf)
+            }
         }
         
         return shelves
