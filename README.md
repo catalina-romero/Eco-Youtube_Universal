@@ -1,14 +1,19 @@
-# Youtube Music Extension for Echo
+# YouTube Universal Extension for Echo
 
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Abhishek890/Eco-Youtube_Music?style=for-the-badge&logo=github)](https://github.com/Abhishek890/Eco-Youtube_Music/releases/latest)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/catalina-romero/Eco-Youtube_Universal?style=for-the-badge&logo=github)](https://github.com/catalina-romero/Eco-Youtube_Universal/releases/latest)
 
-This extension powers YouTube Music support inside Echo using a combination of:
-- **[YTM-kt](https://gitlab.com/syk.sh/ytm-kt)** for fetching all YouTube Music data  
-- **[NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor)** for audio & Video loading and playback
+This is a fork of the original YouTube Music extension, modified to provide **Universal Search** capabilities. It allows accessing the full YouTube catalog (videos, shows, etc.) instead of being restricted to official music content.
 
-You can use, study, share, and improve this project freely.  
-Rewritten / improved by **[@isAbhishekkumar](https://github.com/isAbhishekkumar)** — consider leaving a ⭐!  
-Special thanks to **[@brahmkshatriya](https://github.com/brahmkshatriya)** for the original YTMusic work.
+## Features
+- **Independent Installation:** Coexists with the official YouTube Music extension.
+- **Global Search:** Access the entire YouTube database using the standard WEB client.
+- **Enhanced Mapping:** Support for generic videos, mapping channels as albums when metadata is missing.
+- **Optimized Streaming:** Multi-tier fallback strategy (NewPipe, Ytm-kt, and Universal API).
+
+## Credits
+- **Fork maintained by:** [catalina-romero](https://github.com/catalina-romero)
+- **Original Extension by:** [isAbhishekkumar](https://github.com/isAbhishekkumar)
+- **Original YTMusic work by:** [brahmkshatriya](https://github.com/brahmkshatriya)
+- **Core libraries:** [YTM-kt](https://gitlab.com/syk.sh/ytm-kt) and [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor).
 
 ---
-

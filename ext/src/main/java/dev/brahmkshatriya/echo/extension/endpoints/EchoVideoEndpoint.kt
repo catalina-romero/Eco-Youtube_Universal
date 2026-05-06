@@ -31,7 +31,7 @@ class EchoVideoEndpoint(override val api: YoutubeiApi) : ApiEndpoint() {
 
     suspend fun getVideo(resolve: Boolean, id: String, playlist: String? = null) = coroutineScope {
         val web = async {
-            if (resolve) request(webRemix, id, playlist)
+            if (resolve) request(webContext, id, playlist)
                 .body<YoutubeFormatResponse>().videoDetails.musicVideoType
             else null
         }
@@ -49,11 +49,11 @@ class EchoVideoEndpoint(override val api: YoutubeiApi) : ApiEndpoint() {
         })
     }
 
-    private val webRemix = buildJsonObject {
+    private val webContext = buildJsonObject {
         put("context", buildJsonObject {
             put("client", buildJsonObject {
-                put("clientName", "WEB_REMIX")
-                put("clientVersion", "1.20220606.03.00")
+                put("clientName", "WEB")
+                put("clientVersion", "2.20240210.01.00")
             })
         })
     }

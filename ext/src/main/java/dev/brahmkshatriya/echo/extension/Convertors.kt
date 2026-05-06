@@ -223,11 +223,19 @@ fun YtmSong.toTrack(
     setId: String? = null
 ): Track {
     return try {
-        val album = album?.toAlbum(false, quality)
+        val artistsList = artists?.map { it.toArtist(quality) } ?: emptyList()
+        val albumData = album?.toAlbum(false, quality) ?: artistsList.firstOrNull()?.let { artist ->
+            Album(
+                id = "channel_${artist.id}",
+                title = artist.name,
+                cover = artist.cover,
+                artists = listOf(artist)
+            )
+        }
         val extras = mutableMapOf<String, String>()
         setId?.let { extras["setId"] = it }
         
-        val trackType = Track.Type.Song
+        val trackType = if (this.type == YtmSong.Type.VIDEO) Track.Type.Video else Track.Type.Song
         
         val playableStatus = Track.Playable.Yes
         
@@ -235,13 +243,13 @@ fun YtmSong.toTrack(
             id = id,
             title = name ?: "Unknown",
             type = trackType,
-            artists = artists?.map { it.toArtist(quality) } ?: emptyList(),
+            artists = artistsList,
             cover = thumbnail_provider?.getThumbnailUrl(quality)?.toImageHolder(crop = true)
                 ?: getCover(id, quality),
-            album = album,
+            album = albumData,
             duration = duration?.toLong(),
             plays = null,  
-            releaseDate = album?.releaseDate,
+            releaseDate = albumData?.releaseDate,
             isExplicit = is_explicit,
             isPlayable = playableStatus,
             isRadioSupported = true,

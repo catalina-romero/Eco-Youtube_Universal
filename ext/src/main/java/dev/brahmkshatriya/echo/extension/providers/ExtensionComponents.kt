@@ -73,7 +73,7 @@ class ExtensionComponents(
     }
 
     val searchService by lazy {
-        YouTubeSearchService(api)
+        YouTubeSearchService(api, searchEndpoint)
     }
 
     //providers

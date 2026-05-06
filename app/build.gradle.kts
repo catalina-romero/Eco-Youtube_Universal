@@ -124,3 +124,13 @@ android {
 fun execute(vararg command: String): String = providers.exec {
     commandLine(*command)
 }.standardOutput.asText.get().trim()
+
+tasks.register("exportEapk") {
+    dependsOn("assembleDebug")
+    doLast {
+        val apkFile = file("build/outputs/apk/debug/app-debug.apk")
+        val eapkFile = file("build/${extId}.eapk")
+        apkFile.copyTo(eapkFile, overwrite = true)
+        println("Extension exportada a: ${eapkFile.absolutePath}")
+    }
+}

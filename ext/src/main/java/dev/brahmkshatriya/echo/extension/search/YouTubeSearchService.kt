@@ -5,6 +5,7 @@ import dev.brahmkshatriya.echo.common.models.EchoMediaItem
 import dev.brahmkshatriya.echo.common.models.Playlist
 import dev.brahmkshatriya.echo.common.models.Shelf
 import dev.brahmkshatriya.echo.common.models.Track
+import dev.brahmkshatriya.echo.extension.endpoints.EchoSearchEndpoint
 import dev.brahmkshatriya.echo.extension.toAlbum
 import dev.brahmkshatriya.echo.extension.toArtist
 import dev.brahmkshatriya.echo.extension.toPlaylist
@@ -21,7 +22,8 @@ import kotlinx.coroutines.coroutineScope
 
 
 class YouTubeSearchService(
-    private val api: YoutubeiApi
+    private val api: YoutubeiApi,
+    private val searchEndpoint: EchoSearchEndpoint
 ) {
     data class CategorySearchResult(
         val type: SearchType,
@@ -53,9 +55,10 @@ class YouTubeSearchService(
         thumbnailQuality: ThumbnailProvider.Quality
     ): CategorySearchResult {
         return try {
-            val searchResult = api.Search.search(
+            val searchResult = searchEndpoint.search(
                 query,
-                params = searchType.getDefaultParams()
+                params = null, // Removed music-specific filters
+                nonMusic = true
             ).getOrThrow()
             
             val shelves = convertSearchResultsToShelves(searchResult, thumbnailQuality)

@@ -30,4 +30,14 @@ object ModelTypeHelper {
             }
         }
     }
+
+    /**
+     * Task 3: Modificar las validaciones para permitir que objetos de tipo "Video" sean aceptados,
+     * no solo aquellos marcados específicamente como "MusicVideo".
+     */
+    fun isAcceptableVideoType(musicVideoType: String?): Boolean {
+        // En YouTube Universal aceptamos cualquier tipo de video (null o cualquier string),
+        // permitiendo que el catálogo global de YouTube sea accesible.
+        return true
+    }
 }

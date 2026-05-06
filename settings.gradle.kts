@@ -17,6 +17,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Youtube Music Extension"
+rootProject.name = "YouTube Universal Extension"
 include(":app")
 include(":ext")

@@ -410,10 +410,10 @@ class YoutubeExtension : ExtensionClient, HomeFeedClient, TrackClient, SearchFee
             val userResponse = accountResponse.getUsers("", "").firstOrNull() ?: return@runCatching null
             
             userResponse.copy(
-                subtitle = userResponse.extras["email"] ?: "YouTube Music User",
+                subtitle = userResponse.extras["email"] ?: "YouTube Universal User",
                 extras = userResponse.extras.toMutableMap().apply {
                     put("isLoggedIn", "true")
-                    put("userService", "youtube_music")
+                    put("userService", "youtube_universal")
                     put("accountType", "google")
                     put("lastUpdated", System.currentTimeMillis().toString())
                 }

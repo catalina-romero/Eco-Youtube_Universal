@@ -89,10 +89,10 @@ class YouTubeAuthManager(
         userResponse?.copy(
             subtitle = userResponse.extras["email"]?.takeIf { it.isNotEmpty() }
                 ?: userResponse.extras["channelHandle"]?.takeIf { it.isNotEmpty() }
-                ?: "YouTube Music User",
+                ?: "YouTube Universal User",
             extras = userResponse.extras.toMutableMap().apply {
                 put("isLoggedIn", "true")
-                put("userService", "youtube_music")
+                put("userService", "youtube_universal")
                 put("accountType", "google")
                 put("lastUpdated", System.currentTimeMillis().toString())
             }

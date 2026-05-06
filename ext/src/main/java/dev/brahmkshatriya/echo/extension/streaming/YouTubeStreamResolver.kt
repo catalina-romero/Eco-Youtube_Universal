@@ -60,14 +60,14 @@ class YouTubeStreamResolver(
             errorReasons.add("YtmKt: ${ytmKtResult.reason}")
         }
         
-        //YouTube Music API 
-        println("YtmKt failed, trying YouTube Music API for video ID: $videoId")
-        val youtubeMusicResult = tryYouTubeMusicApi(videoId, preferVideos)
-        if (youtubeMusicResult is ExtractionResult.Success) {
-            println("Successfully loaded streamable media using YouTube Music API")
-            return youtubeMusicResult.media
-        } else if (youtubeMusicResult is ExtractionResult.Error) {
-            errorReasons.add("YouTube Music API: ${youtubeMusicResult.reason}")
+        //YouTube Universal API 
+        println("YtmKt failed, trying YouTube Universal API for video ID: $videoId")
+        val youtubeUniversalResult = tryYouTubeUniversalApi(videoId, preferVideos)
+        if (youtubeUniversalResult is ExtractionResult.Success) {
+            println("Successfully loaded streamable media using YouTube Universal API")
+            return youtubeUniversalResult.media
+        } else if (youtubeUniversalResult is ExtractionResult.Error) {
+            errorReasons.add("YouTube Universal API: ${youtubeUniversalResult.reason}")
         }
         
         // All fallbacks failed
@@ -255,9 +255,9 @@ class YouTubeStreamResolver(
         }
     }
     
-    private suspend fun tryYouTubeMusicApi(videoId: String, preferVideos: Boolean): ExtractionResult {
+    private suspend fun tryYouTubeUniversalApi(videoId: String, preferVideos: Boolean): ExtractionResult {
         return try {
-            println("Falling back to YouTube Music API for video ID: $videoId")
+            println("Falling back to YouTube Universal API for video ID: $videoId")
             
             try {
                 if (api.visitor_id == null) {
@@ -271,32 +271,32 @@ class YouTubeStreamResolver(
                 println("Exception ensuring visitor ID: ${e.message}")
             }
             
-            println("YouTube Music API: Fetching formats for: $videoId")
+            println("YouTube Universal API: Fetching formats for: $videoId")
             val (video, _) = videoEndpoint.getVideo(true, videoId)
             
             if (video.streamingData == null) {
-                val errorMsg = "No streaming data available from YouTube Music API. The video may be restricted, age-gated, or unavailable."
-                println("YouTube Music API: $errorMsg")
+                val errorMsg = "No streaming data available from YouTube Universal API. The video may be restricted, age-gated, or unavailable."
+                println("YouTube Universal API: $errorMsg")
                 return ExtractionResult.Error(errorMsg)
             }
             
             val streamingData = video.streamingData
             val adaptiveFormats = streamingData.adaptiveFormats
             if (adaptiveFormats.isEmpty()) {
-                println("YouTube Music API No adaptive formats available")
-                return ExtractionResult.Error("No audio sources found in YouTube Music API response")
+                println("YouTube Universal API No adaptive formats available")
+                return ExtractionResult.Error("No audio sources found in YouTube Universal API response")
             }
             
-            println("YouTube Music API Got ${adaptiveFormats.size} adaptive formats")
+            println("YouTube Universal API Got ${adaptiveFormats.size} adaptive formats")
             
             val audioFormats = adaptiveFormats
                 .filter { it.mimeType.lowercase().contains("audio/") && it.url != null }
             
-            println("YouTube Music API: ${audioFormats.size} audio formats found")
+            println("YouTube Universal API: ${audioFormats.size} audio formats found")
             
             if (audioFormats.isEmpty()) {
-                println("YouTube Music API: No audio formats available")
-                return ExtractionResult.Error("No audio sources found in YouTube Music API response")
+                println("YouTube Universal API: No audio formats available")
+                return ExtractionResult.Error("No audio sources found in YouTube Universal API response")
             }
             
             val audioSources = audioFormats.map { format ->
@@ -309,10 +309,10 @@ class YouTubeStreamResolver(
                 )
             }
             
-            println("Successfully loaded streamable media using YouTube Music API with ${audioSources.size} quality options")
+            println("Successfully loaded streamable media using YouTube Universal API with ${audioSources.size} quality options")
             return ExtractionResult.Success(Streamable.Media.Server(audioSources, merged = false))
         } catch (e: Exception) {
-            println("YouTube Music API also failed: ${e.message}")
+            println("YouTube Universal API also failed: ${e.message}")
             e.printStackTrace()
             val errorMsg = e.message ?: "Unknown error"
             return ExtractionResult.Error(errorMsg)

@@ -178,9 +178,9 @@ class EchoEnhancedSongEndpoint(
     private fun createDefaultStreamable(videoId: String): List<Streamable> {
         return listOf(
             Streamable.server(
-                id = "youtube_music_$videoId",
+                id = "youtube_universal_$videoId",
                 quality = 128,
-                title = "YouTube Music",
+                title = "YouTube Universal",
                 extras = mapOf("videoId" to videoId)
             )
         )
